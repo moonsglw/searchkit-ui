@@ -1,0 +1,33 @@
+/* Ensure panel container is centered on the page */
+.login-panel {
+    width: 340px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Logo styling */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5rem; 
+}
+
+.logo-image {
+    max-width: 80px;
+    height: auto;
+}
+
+/* .header-content {
+    display: flex;
+    justify-content: center; 
+    flex-direction: column;
+    align-items: center;  
+    text-align: center;
+    width: 100%; 
+} */
+
+.login-panel-footer {
+    align-items: end;
+}

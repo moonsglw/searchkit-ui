@@ -1,0 +1,10 @@
+<div class="card">
+    <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)" styleClass="mt-2">
+        <p-tabPanel header="Applications" leftIcon="pi pi-users">
+            <app-applications-tab></app-applications-tab>
+        </p-tabPanel>
+        <p-tabPanel header="Learners" leftIcon="pi pi-graduation-cap">
+            <app-learners-tab></app-learners-tab>
+        </p-tabPanel>
+    </p-tabView>
+</div>

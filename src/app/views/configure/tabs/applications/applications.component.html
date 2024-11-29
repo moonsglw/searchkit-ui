@@ -1,0 +1,65 @@
+<p-panel header="Configure Applications Data">
+    <p-table [value]="applicationsStatisticsDetails" [loading]="loading">
+        <ng-template pTemplate="caption">
+          <div class="table-header flex justify-content-end">
+            <p-button 
+                [label]="addNewDataSetVisible ? 'Add Data Set' : 'Edit Data Set'" 
+                [icon]="addNewDataSetVisible ? 'pi pi-upload' : 'pi pi-pencil'" 
+                [outlined]="!addNewDataSetVisible"
+                (onClick)="openAddNewDataSetDialog()">
+            </p-button>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="body" let-detail>
+          <tr>
+            <td>{{ detail.field }}</td>
+            <td>
+              <ng-container *ngIf="isArray(detail.value); else defaultText">
+                <ng-container *ngIf="detail.value.length > 0; else noChips">
+                  <p-chip *ngFor="let item of detail.value" [label]="item" class="mr-2"></p-chip>
+                </ng-container>
+                <ng-template #noChips>
+                  <span>No items</span>
+                </ng-template>
+              </ng-container>
+              <ng-template #defaultText>
+                {{ detail.value }}
+              </ng-template>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+           
+</p-panel>
+
+<p-dialog [(visible)]="showAddNewDateSetDialog" header="Upload Applications Data Set File" [modal]="true" [closable]="false"
+    [dismissableMask]="false" [style]="{ width: '400px' }" (onHide)="closeAddNewDataSetDialog()">
+    <div class="p-fluid">
+        <input #fileInput type="file" id="fileInput" accept=".csv" (change)="onFileSelect($event)" hidden />
+        <div class="field" *ngIf="!showProgressBar">
+            <label for="fileInput" class="p-button p-button-primary p-button-outlined">Browse File</label>
+        </div>
+        <div class="field mt-3" *ngIf="selectedFile && !showProgressBar">
+            <p><strong>Selected File:</strong> {{ selectedFile.name }}</p>
+        </div>
+        <div class="field mt-3" *ngIf="selectedFile && !showProgressBar">
+            <button pButton label="Clear File" icon="pi pi-trash" class="p-button-danger" (click)="clearFile(fileInput)"
+                [outlined]="true">
+            </button>
+        </div>
+        <div class="field mt-3" *ngIf="selectedFile && !showProgressBar">
+            <button pButton label="Start Upload" icon="pi pi-upload" class="p-button-success"
+                (click)="confirmUpload()" [outlined]="true"></button>
+        </div>
+        <div class="field mt-3" *ngIf="showProgressBar">
+            <p-progressBar [value]="progress" [showValue]="true"></p-progressBar>
+        </div>
+    </div>
+    <ng-template pTemplate="footer" *ngIf="!showProgressBar">
+        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary ml-2"
+            (click)="closeAddNewDataSetDialog()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-toast position="top-center" key="tc" [life]="3000"></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

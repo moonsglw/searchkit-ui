@@ -1,0 +1,34 @@
+<div class="login-panel">
+    <!-- Logo Section -->
+    <!-- <div class="logo-container">
+        <img src="../../../../assets/images/online-search.png" alt="App Logo" class="logo-image" />
+    </div> -->
+    <p-panel>
+        <ng-template pTemplate="header">
+                <b>Login to the SearchKit App</b>
+        </ng-template>
+        <form [formGroup]="loginForm" (ngSubmit)="loginUser()">
+            <div class="field">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-user"></i>
+                    <input id="username" type="text" pInputText required name="username"
+                        formControlName="username"
+                        placeholder="Username" [style]="{'width':'305px'}" autocomplete="off"/>
+                </span>
+            </div>
+            <div class="field">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-lock"></i>
+                    <input id="password" type="password" pInputText required name="password"
+                        formControlName="password"
+                        placeholder="Password" [style]="{'width':'305px'}" />
+                </span>
+            </div>
+            <div class="login-panel-footer">
+                <button pButton label="{{ loadingBtn ? 'Checking credentials...' : 'Login' }}" [loading]="loadingBtn" type="submit"></button>
+            </div>
+        </form>
+    </p-panel>
+</div>
+
+<p-toast position="top-center" key="tc" [life]="10000"></p-toast>

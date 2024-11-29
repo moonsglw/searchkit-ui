@@ -1,0 +1,65 @@
+<p-panel header="Manage District/App Configuration">
+    <p-table [value]="stationAppConfigDetails" [loading]="loading">
+        <ng-template pTemplate="caption">
+            <div class="table-header flex justify-content-end">
+                <p-button [outlined]="true" icon="pi pi-pencil" label="Edit Configuration"
+                    (click)="openStationAppConfigDialog()" />
+            </div>
+        </ng-template>
+        <ng-template pTemplate="body" let-detail>
+            <tr>
+                <td>{{ detail.field }}</td>
+                <td>
+                    <ng-container *ngIf="detail.field === 'IsActive'; else defaultText">
+                        <p-chip label="{{ detail.value }}"></p-chip>
+                    </ng-container>
+                    <ng-template #defaultText>
+                        {{ detail.value }}
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+<p-toast position="top-center" key="tc" [life]="3000"></p-toast>
+
+<form [formGroup]="stationAppConfigForm">
+    <p-dialog [(visible)]="stationAppConfigDialog" [style]="{ width: '600px' }" [modal]="true"
+        styleClass="p-fluid auto-height-dialog">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold">Update Station App Configuration</span>
+        </ng-template>
+        <div class="p-fluid grid">
+            <div class="p-field col-12 md:col-6 flex flex-column gap-2">
+                <label for="distictNames">District</label>
+                <p-dropdown formControlName="districtName" [options]="listDistricts | sort: 'label'" optionLabel="label"
+                    #distictNames optionValue="value" placeholder="Select District" optionDisabled="disabled"
+                    appendTo="body" (onChange)="onDistrictNameChange($event)"></p-dropdown>
+            </div>
+            <div class="p-field col-12 md:col-6 flex flex-column gap-2">
+                <label for="districtCode">Code</label>
+                <input id="districtCode" type="text" pInputText formControlName="districtCode" autocomplete="off"
+                    aria-autocomplete="none" readOnly="true" />
+            </div>
+        </div>
+        <div class="p-fluid grid">
+            <div class="p-field col-12 md:col-12 flex flex-column gap-2">
+                <label for="config">Config</label>
+                <textarea rows="5" cols="30" pInputTextarea formControlName="config"
+                    id="config"></textarea>
+            </div>
+        </div>
+        <ng-template pTemplate="footer">
+            <button type="button" pButton [label]="stationAppConfigFormSubmitBtnText" (click)="saveStationAppConfig()"
+                [loading]="loadingButton" class="flex-1 mx-1"></button>
+            <button type="button" pButton label="Cancel" class="p-button-secondary p-button-text flex-1 mx-1"
+                (click)="cancelStationAppConfigForm()"></button>
+        </ng-template>
+    </p-dialog>
+</form>
+
+<p-dialog [(visible)]="logoutDialogVisible" [modal]="true" [closable]="false" header="Configuration Updated">
+    <p>The application configuration has been updated. You need to log in again to apply the changes.</p>
+    <button pButton type="button" label="Logout" (click)="logoutUserAfterConfigChange()" class="p-button-danger"></button>
+</p-dialog>
+  

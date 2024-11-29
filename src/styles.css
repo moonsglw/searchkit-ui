@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --font-family: 'Noto Sans', sans-serif;
+}
+
+
+html, body, .p-component, .p-dropdown, .p-dropdown-item, .p-dropdown-label, .p-dropdown-input {
+	font-family: 'Noto Sans', sans-serif !important; 
+	font-size: 13px;
+}
+
+.custom-panel {
+	background-color: #EFF6FF !important;
+}
+
+.custom-top-menu-bar {
+	background-color: #F6F8FA !important;
+}

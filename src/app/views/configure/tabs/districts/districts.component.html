@@ -1,0 +1,158 @@
+<p-panel header="Configure Districts">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button mr-2"
+                (click)="openDistrictDialog()"></button>
+
+            <button pButton pRipple label="Add Bulk" icon="pi pi-upload" class="p-button mr-2" 
+                (click)="openAddBulkDistrictDialog()" severity="secondary"></button>
+            <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger mr-2"
+            (click)="deleteSelectedUser()" [disabled]="!selectedUser"></button>-->
+            <p-button [outlined]="true" icon="pi pi-refresh" (onClick)="refreshList()" />
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-text p-button-secondary"
+                (click)="exportExcel()"></button>
+        </ng-template>
+    </p-toolbar>
+    <p-table #dt [value]="listDistricts" styleClass="p-datatable-sm" [rowHover]="true" [paginator]="true" [rows]="10"
+        [showCurrentPageReport]="true" [loading]="loading"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} districts"
+        [rowsPerPageOptions]="[10, 25, 50, 100]" selectionMode="single" dataKey="id" [(selection)]="selectedDistrict"
+        [globalFilterFields]="['code', 'district_name']" [filterDelay]="0" [sortField]="'district_name'" 
+        [sortOrder]="1">
+        <ng-template pTemplate="caption">
+            <div class="table-header flex justify-content-between">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input #globalFilter pInputText type="text"
+                        (input)="dt.filterGlobal(globalFilter.value, 'contains')" placeholder="Global Search" />
+                </span>
+                <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" (onClick)="clear(dt)" />
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width: 15rem">
+                    <div class="flex align-items-center">
+                        ID
+                    </div>
+                </th>
+                <th pSortableColumn="district_name" style="min-width: 15rem">
+                    <div class="flex justify-content-between align-items-center">
+                        District
+                        <p-sortIcon field="district_name"></p-sortIcon>
+                        <p-columnFilter type="text" field="district_name" display="menu"
+                            class="ml-auto"></p-columnFilter>
+                    </div>
+                </th>
+                <th pSortableColumn="code" style="min-width: 15rem">
+                    <div class="flex justify-content-between align-items-center">
+                        Code
+                        <p-sortIcon field="code"></p-sortIcon>
+                        <p-columnFilter type="numeric" field="code" display="menu" class="ml-auto"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 5rem">
+                    <div class="flex align-items-center">
+                        Active
+                    </div>
+                </th>
+                <th pSortableColumn="cr_dtimes" style="min-width: 10rem">
+                    <div class="flex justify-content-between align-items-center">
+                        Datetime created
+                        <p-sortIcon field="cr_dtimes"></p-sortIcon>
+                        <p-columnFilter type="date" field="cr_dtimes" display="menu" class="ml-auto"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="width: 5rem"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-district>
+            <tr>
+                <td>
+                    {{ district.id }}
+                </td>
+                <td>
+                    {{ district.district_name }}
+                </td>
+                <td>
+                    {{ district.code }}
+                </td>
+                <td>
+                    <!-- <p-chip label="{{ user.enabled ? 'Enabled' : 'Disabled' }}" styleClass="mr-2"></p-chip>-->
+                    <i class="pi"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': district.is_active, 'text-red-500 pi-times-circle': !district.is_active }"></i>
+                </td>
+                <td>
+                    {{ district.cr_dtimes | date : "dd/MM/YYYY, h:mm a" }}
+                </td>
+                <td>
+                    <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-menu>
+                    <button pButton type="button" class="p-button-secondary p-button-outlined p-button-text"
+                        icon="pi pi-ellipsis-v" (click)="showMenuForDistrict(menu, $event, district)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<form [formGroup]="districtForm">
+    <p-dialog [(visible)]="districtDialog" header="District Details" [style]="{ width: '900px' }" [modal]="true"
+        styleClass="p-fluid auto-height-dialog">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold">District Details</span>
+        </ng-template>
+        <div class="p-fluid grid">
+            <div class="p-field col-12 md:col-6 flex flex-column gap-2">
+                <label for="districtName">District</label>
+                <input id="districtName" type="text" pInputText formControlName="districtName" autocomplete="off"
+                    aria-autocomplete="none" />
+            </div>
+            <div class="p-field col-12 md:col-6 flex flex-column gap-2">
+                <label for="code">Code</label>
+                <input id="code" type="text" pInputText formControlName="code" autocomplete="off"
+                    aria-autocomplete="none" />
+            </div>
+        </div>
+        <ng-template pTemplate="footer">
+            <button type="button" pButton [label]="districtFormSubmitBtnText" (click)="saveDistrict()"
+                [loading]="loadingButton" class="flex-1 mx-1"></button>
+            <button type="button" pButton label="Cancel" class="p-button-secondary p-button-text flex-1 mx-1"
+                (click)="cancelDistrictForm()"></button>
+        </ng-template>
+    </p-dialog>
+</form>
+
+<p-dialog [(visible)]="showAddBulkDialog" header="Upload Districts File" [modal]="true" [closable]="true"
+    [dismissableMask]="true" [style]="{ width: '400px' }" (onHide)="closeAddBulkDistrictDialog()">
+    <div class="p-fluid">
+        <div class="field">
+            <label for="fileInput" class="p-button p-button-primary p-button-outlined">Browse File</label>
+            <input #fileInput type="file" id="fileInput" accept=".xlsx" (change)="onFileSelect($event)" hidden />
+        </div>
+        <div class="field mt-3" *ngIf="selectedFile">
+            <p><strong>Selected File:</strong> {{ selectedFile.name }}</p>
+        </div>
+        <div class="field mt-3" *ngIf="selectedFile">
+            <button pButton label="Clear File" icon="pi pi-trash" class="p-button-danger" (click)="clearFile(fileInput)"
+                [outlined]="true">
+            </button>
+        </div>
+        <div class="field mt-3" *ngIf="selectedFile && !showProgressBar">
+            <button pButton label="Start Upload" icon="pi pi-upload" class="p-button-success"
+                (click)="confirmUpload()" [outlined]="true"></button>
+        </div>
+        <div class="field mt-3" *ngIf="showProgressBar">
+            <p-progressBar [value]="progress" [showValue]="true"></p-progressBar>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary ml-2"
+            (click)="closeAddBulkDistrictDialog()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-toast position="top-center" key="tc"></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

@@ -1,0 +1,14 @@
+.left-menu-items .p-submenu-list {
+    width: 100% !important;
+}
+
+.active-menu-item {
+    font-weight: bold;
+    color: #007ad9;
+    /* Custom color for the active item */
+}
+
+.p-menuitem-link.active-item {
+    font-weight: bold;
+    /* Optional for emphasis */
+}

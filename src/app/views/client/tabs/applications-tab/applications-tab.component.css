@@ -1,0 +1,39 @@
+/* Target the panel background */
+.accent-panel .p-panel {
+    background-color: #2196F3; /* Example accent background */
+    border: none; /* Optional: remove border */
+    color: white; /* Optional: set text color */
+}
+
+/* Target the panel header */
+.accent-panel .p-panel-header {
+    background-color: #1E88E5; /* Darker accent color for the header */
+    color: white; /* Header text color */
+}
+
+/* Style inputs, dropdowns, and buttons within the panel */
+.accent-content .p-inputtext,
+.accent-content .p-dropdown,
+.accent-content .p-button {
+    background-color: #BBDEFB; /* Light accent background for form controls */
+    color: black; /* Text color inside inputs */
+    border: 1px solid #90CAF9; /* Optional border color for inputs */
+}
+
+/* Style the buttons (Apply Query and Clear) */
+.accent-content .p-button {
+    background-color: #42A5F5 !important; /* Button background color */
+    border-color: #1E88E5 !important; /* Button border color */
+    color: white !important; /* Button text color */
+}
+
+/* Optional: style the secondary clear button */
+.accent-content .p-button-secondary.p-button-text {
+    background-color: transparent !important;
+    color: #42A5F5 !important; /* Accent color for text button */
+}
+
+.p-panel-header .p-button-link {
+    flex: right;
+}
+
