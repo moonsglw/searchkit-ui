@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { District } from './models/interfaces';
 import { ConfigService } from './services/config.service';
-import { environment } from 'src/environments/environment';
 import { CONFIG_PROPERTY, ROLE } from './app.constants';
 import { AuthService } from './views/auth/auth.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BnNgIdleService } from 'bn-ng-idle';
 import { Location } from '@angular/common';
-import { catchError, Observable, of, tap } from 'rxjs';
 import { ApplicationService } from './services/application.service';
 import { marked } from 'marked';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -41,7 +39,6 @@ export class AppComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private idleService: BnNgIdleService,
-    private activatedRoute: ActivatedRoute,
     private applicationService: ApplicationService,
     private sanitizer: DomSanitizer
   ) {
@@ -54,12 +51,45 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     //(document.body.style as any).zoom = "90%";
+    this.checkIfAppSetUp();
     this.loadAppConfig();
     this.loadMasterData();
     this.checkLoginStatus();
-    
+
     // Prevent back navigation
     this.preventBackNavigation();
+
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+    });
+  }
+
+  checkIfAppSetUp(): void {
+    this.configService.getStationAppConfigForUi().subscribe({
+      next: (response) => {
+        if (response.response==null) {
+          //console.log(response);
+          this.showNoConfigMessage();
+        } else {
+          // Handle successful response and use the data
+        }
+      },
+      error: (err) => {
+        // Handle error if needed
+        console.error(err);
+      }
+    });
+  }
+
+  showNoConfigMessage() {
+    this.messageService.add({
+      key: 'main',
+      severity: 'warn',
+      summary: 'App Setup Incomplete',
+      detail: 'There are no app configurations available in the database.',
+      sticky: true  // This makes the message not closable
+    });
   }
 
   loadAppConfig(): void {
@@ -78,7 +108,7 @@ export class AppComponent implements OnInit {
 
   loadMasterData(): void {
     // get master data for dropdowns to be consumed i.e. list of usecases, districts, registrationAreas
-    this.loadDistricts();  
+    this.loadDistricts();
     this.loadUsecases();
     this.loadRegistrationAreas();
     this.loadGenderTypes();
@@ -112,7 +142,7 @@ export class AppComponent implements OnInit {
 
       if (this.userId) {
         const storedUserMap = this.authService.getLoggedInUserMap();
-        
+
         if (storedUserMap) {
           this.role = storedUserMap['role_name'] || '';
           localStorage.setItem('role', this.role);
@@ -217,7 +247,7 @@ export class AppComponent implements OnInit {
   preventBackNavigation(): void {
     // Use pushState to add a new state to the history stack
     window.history.pushState(null, '', window.location.href);
-    
+
     // Listen for the 'popstate' event, which is triggered when back navigation occurs
     window.addEventListener('popstate', () => {
       // Push the same state again to disable back navigation
@@ -225,12 +255,12 @@ export class AppComponent implements OnInit {
     });
   }
 
-displayAppInfo() {
+  displayAppInfo() {
     this.configService.getAppReadme().subscribe({
       next: (response) => {
         if (response.errors == null && response.response.readme) {
-          // Convert Markdown to HTML
-          const htmlContent: any = marked(response.response.readme);
+          const markdownContent = response.response.readme;
+          const htmlContent: any = marked(markdownContent);
           this.appReadMeContent = this.sanitizer.bypassSecurityTrustHtml(htmlContent);
           this.displayAppReadMeDialog = true; // Show the dialog
         }
@@ -242,7 +272,7 @@ displayAppInfo() {
         console.error('Error fetching README:', err);
       }
     });
-}
- 
+  }
+
 
 }
